@@ -1,34 +1,172 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* KCLI Terminal Theme */
+:root {
+  --cyan-glow: 0 0 20px rgba(34, 211, 238, 0.3);
+  --terminal-bg: #0a0a0f;
+  --terminal-border: #1e293b;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+body {
+  background-color: var(--terminal-bg);
+  font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Monaco, 'Cascadia Code', monospace;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-.App-link {
-    color: #61dafb;
+::-webkit-scrollbar-track {
+  background: #111827;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
+}
+
+/* Terminal cursor animation */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.cursor-blink::after {
+  content: '█';
+  animation: blink 1s infinite;
+  color: #22d3ee;
+}
+
+/* Glow effects */
+.glow-cyan {
+  box-shadow: var(--cyan-glow);
+}
+
+.text-glow {
+  text-shadow: 0 0 10px currentColor;
+}
+
+/* Code blocks */
+pre {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+code {
+  font-family: inherit;
+}
+
+/* Message animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+[data-testid="chat-message"] {
+  animation: slideIn 0.2s ease-out;
+}
+
+/* Input focus glow */
+textarea:focus {
+  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.2);
+}
+
+/* Button hover effects */
+button {
+  transition: all 0.15s ease;
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Modal backdrop blur */
+.backdrop-blur {
+  backdrop-filter: blur(4px);
+}
+
+/* Scanline effect (subtle) */
+.scanlines {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.1) 2px,
+    rgba(0, 0, 0, 0.1) 4px
+  );
+  z-index: 9999;
+}
+
+/* Loading dots animation */
+@keyframes dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+
+.loading-dots::after {
+  content: '.';
+  animation: dots 1.5s infinite;
+}
+
+/* Tool card styling */
+.tool-card {
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.05) 0%, transparent 100%);
+  border: 1px solid rgba(34, 211, 238, 0.2);
+}
+
+.tool-card:hover {
+  border-color: rgba(34, 211, 238, 0.4);
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.1) 0%, transparent 100%);
+}
+
+/* Sidebar styling */
+.sidebar-item {
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.sidebar-item:hover {
+  background-color: rgba(34, 211, 238, 0.1);
+}
+
+.sidebar-item.active {
+  background-color: rgba(34, 211, 238, 0.2);
+  border-left: 2px solid #22d3ee;
+}
+
+/* ASCII art styling */
+.ascii-art {
+  font-family: monospace;
+  white-space: pre;
+  line-height: 1.2;
+  color: #22d3ee;
+  text-shadow: 0 0 5px rgba(34, 211, 238, 0.5);
+}
+
+/* Status indicator */
+.status-online {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
