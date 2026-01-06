@@ -498,6 +498,30 @@ async def get_config():
         "api_configured": bool(OPENROUTER_API_KEY)
     }
 
+@api_router.get("/download/kcli")
+async def download_kcli():
+    """Download KCLI Desktop package."""
+    zip_path = WORKSPACE_DIR / "kcli_desktop.zip"
+    if not zip_path.exists():
+        raise HTTPException(status_code=404, detail="Download not available")
+    return FileResponse(
+        path=str(zip_path),
+        filename="kcli_desktop.zip",
+        media_type="application/zip"
+    )
+
+@api_router.get("/download/install-script")
+async def download_install_script():
+    """Get the PowerShell install script content."""
+    script_path = ROOT_DIR / "kcli_desktop" / "install.ps1"
+    if not script_path.exists():
+        raise HTTPException(status_code=404, detail="Install script not available")
+    return FileResponse(
+        path=str(script_path),
+        filename="install.ps1",
+        media_type="text/plain"
+    )
+
 # Include router and middleware
 app.include_router(api_router)
 
