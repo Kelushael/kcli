@@ -1,0 +1,48 @@
+[project]
+name = "kcli"
+version = "1.0.0"
+description = "KCLI Desktop Commander - AI-Powered Terminal Assistant"
+readme = "README.md"
+authors = [{name = "Kelushael"}]
+license = {text = "MIT"}
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+dependencies = [
+    "httpx>=0.24.0",
+    "colorama>=0.4.6",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pyinstaller>=6.0.0",
+    "pytest>=7.0.0",
+]
+
+[project.scripts]
+kcli = "kcli.agent:main"
+
+[project.urls]
+Homepage = "https://github.com/kelushael/kcli"
+Documentation = "https://github.com/kelushael/kcli#readme"
+Issues = "https://github.com/kelushael/kcli/issues"
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["kcli*"]
