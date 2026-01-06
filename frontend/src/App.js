@@ -205,6 +205,7 @@ function App() {
   const [config, setConfig] = useState(null);
   const [pendingTool, setPendingTool] = useState(null);
   const [showFiles, setShowFiles] = useState(false);
+  const [showDownload, setShowDownload] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [conversations, setConversations] = useState([]);
   const [currentConvId, setCurrentConvId] = useState(null);
