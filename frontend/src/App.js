@@ -570,6 +570,62 @@ function App() {
           onClose={() => setShowFiles(false)}
         />
       )}
+
+      {/* Download Desktop App Modal */}
+      {showDownload && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" data-testid="download-modal">
+          <div className="bg-gray-900 border border-purple-500 rounded-lg max-w-lg w-full">
+            <div className="p-4 border-b border-purple-500/30 flex justify-between items-center">
+              <h3 className="text-purple-400 font-mono text-lg flex items-center gap-2">
+                <Icons.Download /> Download KCLI Desktop
+              </h3>
+              <button onClick={() => setShowDownload(false)} className="text-gray-400 hover:text-white">
+                <Icons.X />
+              </button>
+            </div>
+            <div className="p-6">
+              <div className="text-center mb-6">
+                <div className="text-6xl mb-4">⌘</div>
+                <h4 className="text-xl font-mono text-white mb-2">KCLI Desktop Commander</h4>
+                <p className="text-gray-400 text-sm">Run KCLI directly on your Windows PC - no browser needed!</p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700">
+                  <div className="flex items-center gap-2 text-cyan-400 font-mono mb-2">
+                    <Icons.Windows /> Quick Install (PowerShell)
+                  </div>
+                  <code className="text-xs text-green-400 block bg-black/50 p-2 rounded font-mono overflow-x-auto">
+                    pip install httpx colorama && python -m kcli
+                  </code>
+                </div>
+
+                <a
+                  href={`${API}/download/kcli`}
+                  download="kcli_desktop.zip"
+                  className="block w-full bg-purple-600 hover:bg-purple-500 text-white font-mono py-3 px-4 rounded text-center transition-colors"
+                >
+                  <Icons.Download /> Download Source Package (.zip)
+                </a>
+
+                <div className="text-xs text-gray-500 font-mono text-center">
+                  Includes: Python source, build scripts, and Inno Setup installer config
+                </div>
+
+                <div className="border-t border-gray-700 pt-4 mt-4">
+                  <div className="text-sm text-gray-400 font-mono mb-2">Build your own .exe:</div>
+                  <ol className="text-xs text-gray-500 space-y-1 font-mono">
+                    <li>1. Extract the zip</li>
+                    <li>2. Run: <code className="text-green-400">pip install pyinstaller</code></li>
+                    <li>3. Run: <code className="text-green-400">build.bat</code></li>
+                    <li>4. Your kcli.exe will be in <code className="text-cyan-400">dist/</code></li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
