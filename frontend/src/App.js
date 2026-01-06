@@ -429,13 +429,20 @@ function App() {
           ))}
         </div>
 
-        <div className="p-3 border-t border-gray-800">
+        <div className="p-3 border-t border-gray-800 space-y-2">
           <button
             onClick={() => setShowFiles(true)}
             className="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 font-mono py-2 px-3 rounded flex items-center justify-center gap-2 transition-colors"
             data-testid="browse-files-btn"
           >
             <Icons.Folder /> Browse Files
+          </button>
+          <button
+            onClick={() => setShowDownload(true)}
+            className="w-full bg-purple-800 hover:bg-purple-700 text-white font-mono py-2 px-3 rounded flex items-center justify-center gap-2 transition-colors"
+            data-testid="download-desktop-btn"
+          >
+            <Icons.Download /> Get Desktop App
           </button>
         </div>
 
