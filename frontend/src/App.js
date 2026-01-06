@@ -18,6 +18,8 @@ const Icons = {
   Trash: () => <span>🗑</span>,
   Plus: () => <span>+</span>,
   Menu: () => <span>≡</span>,
+  Download: () => <span>⬇</span>,
+  Windows: () => <span>⊞</span>,
 };
 
 // Tool Approval Modal
