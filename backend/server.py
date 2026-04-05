@@ -26,6 +26,11 @@ db = client[os.environ['DB_NAME']]
 
 # OpenRouter config
 OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY', '')
+# sovereign: api-key-check
+if not OPENROUTER_API_KEY:
+    import warnings
+    warnings.warn("OPENROUTER_API_KEY is not set. Chat will return errors.", stacklevel=1)
+
 OPENROUTER_MODEL = os.getenv('OPENROUTER_MODEL', 'cognitivecomputations/dolphin-mistral-24b-venice-edition:free')
 OPENROUTER_BASE_URL = os.getenv('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1')
 
@@ -528,7 +533,7 @@ app.include_router(api_router)
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=os.environ.get('CORS_ORIGINS', 'http://localhost:3000,http://localhost:8080').split(','),
     allow_methods=["*"],
     allow_headers=["*"],
 )
