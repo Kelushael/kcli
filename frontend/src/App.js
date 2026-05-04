@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './App.css';
 import axios from 'axios';
+import HostingerPanel from './components/HostingerPanel';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -20,6 +21,7 @@ const Icons = {
   Menu: () => <span>≡</span>,
   Download: () => <span>⬇</span>,
   Windows: () => <span>⊞</span>,
+  Hostinger: () => <span>🏠</span>,
 };
 
 // Tool Approval Modal
@@ -206,6 +208,7 @@ function App() {
   const [pendingTool, setPendingTool] = useState(null);
   const [showFiles, setShowFiles] = useState(false);
   const [showDownload, setShowDownload] = useState(false);
+  const [showHostinger, setShowHostinger] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [conversations, setConversations] = useState([]);
   const [currentConvId, setCurrentConvId] = useState(null);
@@ -444,6 +447,13 @@ function App() {
           >
             <Icons.Download /> Get Desktop App
           </button>
+          <button
+            onClick={() => setShowHostinger(true)}
+            className="w-full bg-orange-800 hover:bg-orange-700 text-white font-mono py-2 px-3 rounded flex items-center justify-center gap-2 transition-colors"
+            data-testid="hostinger-btn"
+          >
+            <Icons.Hostinger /> Hostinger
+          </button>
         </div>
 
         {config && (
@@ -555,6 +565,11 @@ function App() {
           </div>
         </div>
       </div>
+
+      {/* Hostinger Panel */}
+      {showHostinger && (
+        <HostingerPanel onClose={() => setShowHostinger(false)} />
+      )}
 
       {/* Tool Approval Modal */}
       <ToolApprovalModal

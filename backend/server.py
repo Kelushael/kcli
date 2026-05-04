@@ -19,6 +19,8 @@ import re
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
+from hostinger_router import router as hostinger_router
+
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
@@ -524,6 +526,7 @@ async def download_install_script():
 
 # Include router and middleware
 app.include_router(api_router)
+app.include_router(hostinger_router)
 
 app.add_middleware(
     CORSMiddleware,
