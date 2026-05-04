@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "gesherel": {
+      "command": "python",
+      "args": ["-m", "mcp_server"],
+      "cwd": "/home/user/kcli"
+    }
+  }
+}

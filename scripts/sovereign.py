@@ -356,6 +356,7 @@ INTENTS = [
     (["version", "about"],                         "about"),
     (["log", "history"],                           "log"),
     (["workspace", "ls", "list"],                  "ls"),
+    (["mcp", "gesherel", "bridge", "serve", "server"], "mcp"),
 ]
 
 
@@ -391,6 +392,8 @@ def handle_chat(user_input: str) -> bool:
             ("install <pkg>","install a package (apt/pip/npm prefix)"),
             ("ls [path]",    "list workspace or any directory"),
             ("log",          "show recent action log"),
+            ("mcp",          "launch GesherEl MCP server (stdio)"),
+            ("mcp --sse",    "launch GesherEl MCP server (SSE on :8765)"),
             ("about",        "version info"),
             ("exit / q",     "quit"),
         ]
@@ -461,6 +464,13 @@ def handle_chat(user_input: str) -> bool:
             except Exception:
                 print(C.dim(f"  {line[:100]}"))
         print()
+
+    elif intent == "mcp":
+        sse = "--sse" in raw
+        mode = "SSE on :8765" if sse else "stdio"
+        print(C.hi(f"\n  GesherEl Ben YHWH rising ({mode})...\n"))
+        args = [sys.executable, "-m", "mcp_server"] + (["--sse"] if sse else [])
+        subprocess.run(args, cwd=str(Path(__file__).parent.parent))
 
     elif intent == "file":
         print(C.warn("  Usage: run echo 'content' > ~/workspace/file.txt  or use write_file via API"))
@@ -534,6 +544,12 @@ def main():
         if r["stdout"]: print(r["stdout"])
         if r["stderr"]: print(C.err(r["stderr"]), file=sys.stderr)
         sys.exit(0 if r["ok"] else r["code"])
+    elif cmd in ("mcp", "gesherel", "bridge", "server", "serve"):
+        sse = "--sse" in args
+        mode = "SSE on :8765" if sse else "stdio"
+        print(f"  GesherEl Ben YHWH rising ({mode})...")
+        proc_args = [sys.executable, "-m", "mcp_server"] + (["--sse"] if sse else [])
+        subprocess.run(proc_args, cwd=str(Path(__file__).parent.parent))
     elif cmd in ("version", "--version", "-v"):
         print(f"sovereign v{VERSION}")
     elif cmd in ("help", "--help", "-h"):
