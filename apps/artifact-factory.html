@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARTIFACT FACTORY</title>
+<style>
+:root {
+  --pink: #ff6eb4;
+  --yellow: #ffe94d;
+  --blue: #7dd8f8;
+  --black: #0a0a0a;
+  --lime: #aaff00;
+  --bg: #0d0d0d;
+  --bg2: #141414;
+  --bg3: #1a1a1a;
+  --dim: #2a2a2a;
+  --dim2: #333;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--lime);
+  font-family: 'Courier New', monospace;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#topbar {
+  background: var(--black);
+  border-bottom: 1px solid var(--dim);
+  padding: 7px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+#topbar .title { color: var(--pink); font-size: 11px; letter-spacing: 4px; text-transform: uppercase; }
+#topbar .sub { color: #444; font-size: 10px; letter-spacing: 2px; }
+
+#main { flex: 1; display: flex; overflow: hidden; }
+
+/* LEFT PANEL */
+#left {
+  width: 340px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--dim);
+  background: var(--bg2);
+}
+
+.panel-label {
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: #444;
+  padding: 8px 14px 6px;
+  border-bottom: 1px solid var(--dim);
+  text-transform: uppercase;
+}
+
+#sys-area {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--dim);
+  flex-shrink: 0;
+}
+#sys-area label { font-size: 9px; color: var(--yellow); letter-spacing: 2px; display: block; margin-bottom: 5px; }
+#sys-prompt {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--dim);
+  color: var(--yellow);
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  padding: 6px 8px;
+  resize: vertical;
+  min-height: 70px;
+  outline: none;
+  line-height: 1.5;
+}
+#sys-prompt:focus { border-color: var(--yellow); }
+
+#desc-area {
+  flex: 1;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+#desc-area label { font-size: 9px; color: var(--blue); letter-spacing: 2px; }
+#artifact-desc {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--dim);
+  color: var(--blue);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  padding: 8px;
+  resize: none;
+  outline: none;
+  line-height: 1.6;
+}
+#artifact-desc:focus { border-color: var(--blue); }
+#artifact-desc::placeholder { color: #333; }
+
+#build-btn {
+  background: transparent;
+  border: 1px solid var(--lime);
+  color: var(--lime);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  padding: 9px;
+  cursor: pointer;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  transition: all .15s;
+  flex-shrink: 0;
+}
+#build-btn:hover:not(:disabled) { background: var(--lime); color: var(--black); }
+#build-btn:disabled { opacity: .3; cursor: default; }
+
+/* CENTER — PREVIEW */
+#center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-right: 1px solid var(--dim);
+}
+
+#preview-bar {
+  background: var(--black);
+  border-bottom: 1px solid var(--dim);
+  padding: 0 14px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+#preview-bar span { font-size: 9px; letter-spacing: 3px; color: #555; text-transform: uppercase; }
+.act-btns { display: flex; gap: 8px; }
+.act-btn {
+  font-size: 9px; padding: 2px 8px; cursor: pointer;
+  border: 1px solid var(--dim2); color: #666; background: transparent;
+  font-family: 'Courier New', monospace; text-transform: uppercase; transition: all .15s;
+}
+.act-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+
+#preview-placeholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--dim2);
+}
+.ph-icon { font-size: 36px; }
+.ph-msg { font-size: 10px; letter-spacing: 3px; color: #2a2a2a; }
+#preview-frame { flex: 1; border: none; display: none; background: white; }
+
+/* RIGHT — CODE */
+#right {
+  width: 280px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg2);
+}
+#code-out {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  font-size: 9px;
+  line-height: 1.6;
+  color: #444;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+#code-out.live { color: #4a4; }
+#code-out::-webkit-scrollbar { width: 3px; }
+#code-out::-webkit-scrollbar-thumb { background: var(--dim2); }
+
+#log-area {
+  height: 110px;
+  flex-shrink: 0;
+  border-top: 1px solid var(--dim);
+  overflow-y: auto;
+  padding: 6px 10px;
+  font-size: 9px;
+  line-height: 1.7;
+}
+#log-area::-webkit-scrollbar { width: 3px; }
+.ll { display: flex; gap: 6px; }
+.lt { color: #2a2a2a; } .lai { color: var(--lime); } .lok { color: var(--yellow); } .lerr { color: #f55; }
+
+#statusbar {
+  background: var(--black);
+  border-top: 1px solid var(--dim);
+  padding: 3px 16px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #333;
+  flex-shrink: 0;
+}
+.s-pink { color: var(--pink); }
+.s-blue { color: var(--blue); }
+.s-lime { color: var(--lime); }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="title">⬡ ARTIFACT FACTORY</div>
+  <div class="sub">GESHEREL · localhost:8765</div>
+</div>
+
+<div id="main">
+
+  <!-- LEFT -->
+  <div id="left">
+    <div class="panel-label">// configure</div>
+
+    <div id="sys-area">
+      <label>// SYSTEM PROMPT</label>
+      <textarea id="sys-prompt">You are a sovereign artifact builder. Output ONLY complete, self-contained HTML. Dark theme: black background, pink/yellow/blue/lime accents. Wire AI calls to http://localhost:8765/v1/messages. No markdown. No explanation.</textarea>
+    </div>
+
+    <div id="desc-area">
+      <label>// DESCRIBE YOUR ARTIFACT</label>
+      <textarea id="artifact-desc" placeholder="e.g. a todo list with glowing neon cards and a pink header...&#10;&#10;e.g. a live clock with lime digits and a command input...&#10;&#10;e.g. a password generator with copy and strength meter..."></textarea>
+      <button id="build-btn">⬡ FABRICATE</button>
+    </div>
+  </div>
+
+  <!-- CENTER -->
+  <div id="center">
+    <div id="preview-bar">
+      <span>// LIVE OUTPUT</span>
+      <div class="act-btns">
+        <button class="act-btn" id="copy-btn">COPY</button>
+        <button class="act-btn" id="dl-btn">DOWNLOAD</button>
+      </div>
+    </div>
+    <div id="preview-placeholder">
+      <div class="ph-icon">⬡</div>
+      <div class="ph-msg">fabricate · preview · deploy</div>
+    </div>
+    <iframe id="preview-frame"></iframe>
+  </div>
+
+  <!-- RIGHT -->
+  <div id="right">
+    <div class="panel-label">// raw output</div>
+    <div id="code-out">// fabricated code appears here...</div>
+    <div id="log-area"></div>
+  </div>
+
+</div>
+
+<div id="statusbar">
+  <span><span class="s-pink">GESHEREL</span> · PROXY · SOVEREIGN</span>
+  <span><span class="s-blue">MEMORY</span> · SHARED · <span class="s-lime">LIVE</span></span>
+</div>
+
+<script>
+const GESHEREL = 'http://localhost:8765';
+let generatedCode = '';
+
+function log(type, msg) {
+  const el = document.getElementById('log-area');
+  const t = new Date().toLocaleTimeString('en', {hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const d = document.createElement('div'); d.className = 'll';
+  d.innerHTML = `<span class="lt">[${t}]</span><span class="l${type}">${msg}</span>`;
+  el.appendChild(d); el.scrollTop = el.scrollHeight;
+}
+
+async function fabricate() {
+  const desc = document.getElementById('artifact-desc').value.trim();
+  if (!desc) { log('lerr', 'describe your artifact first'); return; }
+
+  const btn = document.getElementById('build-btn');
+  btn.disabled = true; btn.textContent = '⬡ FABRICATING...';
+  document.getElementById('code-out').textContent = '// fabricating...';
+  document.getElementById('code-out').className = '';
+  log('lai', 'sending to GesherEl...');
+
+  try {
+    const res = await fetch(GESHEREL + '/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-sovereign-app': 'artifact-factory' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 4000,
+        system: document.getElementById('sys-prompt').value.trim(),
+        messages: [{ role: 'user', content: `Fabricate: ${desc}\n\nOutput ONLY the complete HTML document.` }]
+      })
+    });
+    const data = await res.json();
+    if (data.error) { log('lerr', data.error.message); return; }
+
+    let html = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
+    html = html.replace(/^```html?\n?/i, '').replace(/```$/, '').trim();
+    if (!html.includes('<html') && !html.includes('<!DOCTYPE')) {
+      const m = html.match(/(<html[\s\S]*<\/html>)/i);
+      if (m) html = m[1];
+    }
+    generatedCode = html;
+
+    document.getElementById('code-out').textContent = html;
+    document.getElementById('code-out').className = 'live';
+
+    const frame = document.getElementById('preview-frame');
+    document.getElementById('preview-placeholder').style.display = 'none';
+    frame.style.display = 'block';
+    frame.srcdoc = html;
+
+    log('lok', `fabricated · ${html.length} chars`);
+
+    // Save to GesherEl memory
+    await fetch(GESHEREL + '/memory/last_artifact', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({value: desc})
+    }).catch(() => {});
+
+  } catch(e) { log('lerr', e.message); }
+  finally { btn.disabled = false; btn.textContent = '⬡ FABRICATE'; }
+}
+
+document.getElementById('build-btn').addEventListener('click', fabricate);
+document.getElementById('artifact-desc').addEventListener('keydown', e => { if (e.ctrlKey && e.key === 'Enter') fabricate(); });
+
+document.getElementById('copy-btn').addEventListener('click', () => {
+  if (!generatedCode) return;
+  navigator.clipboard.writeText(generatedCode).then(() => log('lok', 'copied to clipboard'));
+});
+document.getElementById('dl-btn').addEventListener('click', () => {
+  if (!generatedCode) return;
+  const a = document.createElement('a');
+  a.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(generatedCode);
+  a.download = 'artifact-' + Date.now() + '.html';
+  a.click(); log('lok', 'downloaded');
+});
+
+log('lai', 'artifact factory · GesherEl wired');
+log('lok', 'describe · Ctrl+Enter or FABRICATE');
+</script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOVEREIGN DESIGN STUDIO</title>
+<style>
+:root {
+  --pink: #ff6eb4; --yellow: #ffe94d; --blue: #7dd8f8;
+  --lime: #aaff00; --black: #080808; --bg: #0d0d0d;
+  --bg2: #111; --bg3: #181818; --dim: #252525; --dim2: #333;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--lime); font-family: 'Courier New', monospace; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+#topbar { background: var(--black); border-bottom: 1px solid var(--dim); padding: 0 16px; height: 38px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.t-title { color: var(--pink); font-size: 11px; letter-spacing: 5px; text-transform: uppercase; }
+.t-pills { display: flex; gap: 6px; }
+.pill { font-size: 9px; letter-spacing: 2px; padding: 2px 8px; border-radius: 10px; border: 1px solid; text-transform: uppercase; }
+.pill-ai { color: var(--lime); border-color: var(--lime); }
+.pill-mcp { color: var(--blue); border-color: var(--blue); }
+.pill-live { color: var(--pink); border-color: var(--pink); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+#studio { flex: 1; display: flex; overflow: hidden; }
+
+#left { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; border-right: 1px solid var(--dim); background: var(--bg2); }
+.p-label { font-size: 9px; letter-spacing: 3px; color: #555; padding: 7px 12px 6px; border-bottom: 1px solid var(--dim); text-transform: uppercase; flex-shrink: 0; }
+#tool-rack { display: flex; flex-wrap: wrap; gap: 5px; padding: 8px 10px; border-bottom: 1px solid var(--dim); flex-shrink: 0; }
+.tool-chip { font-size: 9px; letter-spacing: 1px; padding: 3px 8px; border-radius: 3px; border: 1px solid var(--dim2); color: #666; cursor: pointer; text-transform: uppercase; transition: all .15s; }
+.tool-chip:hover, .tool-chip.active { border-color: var(--blue); color: var(--blue); background: rgba(125,216,248,.07); }
+.tool-chip.active { border-color: var(--lime); color: var(--lime); background: rgba(170,255,0,.07); }
+
+#sys-wrap { padding: 8px 10px; border-bottom: 1px solid var(--dim); flex-shrink: 0; }
+#sys-wrap label { font-size: 9px; color: var(--yellow); letter-spacing: 2px; display: block; margin-bottom: 4px; }
+#sys-box { width: 100%; background: var(--bg3); border: 1px solid var(--dim); color: var(--yellow); font-family: 'Courier New', monospace; font-size: 10px; padding: 5px 7px; resize: none; outline: none; min-height: 55px; line-height: 1.5; }
+#sys-box:focus { border-color: var(--yellow); }
+
+#prompt-wrap { flex: 1; padding: 8px 10px; display: flex; flex-direction: column; gap: 7px; }
+#prompt-wrap label { font-size: 9px; color: var(--blue); letter-spacing: 2px; }
+#prompt-box { flex: 1; background: var(--bg3); border: 1px solid var(--dim); color: var(--blue); font-family: 'Courier New', monospace; font-size: 11px; padding: 7px; resize: none; outline: none; line-height: 1.6; min-height: 80px; }
+#prompt-box:focus { border-color: var(--blue); }
+#prompt-box::placeholder { color: #333; }
+
+#build-btn { width: 100%; background: transparent; border: 1px solid var(--lime); color: var(--lime); font-family: 'Courier New', monospace; font-size: 11px; padding: 8px; cursor: pointer; letter-spacing: 3px; text-transform: uppercase; transition: all .15s; }
+#build-btn:hover:not(:disabled) { background: var(--lime); color: var(--black); }
+#build-btn:disabled { opacity: .3; cursor: default; }
+
+#center { flex: 1; display: flex; flex-direction: column; overflow: hidden; border-right: 1px solid var(--dim); }
+#preview-bar { background: var(--black); border-bottom: 1px solid var(--dim); padding: 0 12px; height: 32px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+#preview-bar span { font-size: 9px; letter-spacing: 3px; color: #555; text-transform: uppercase; }
+#preview-actions { display: flex; gap: 8px; }
+.act-btn { font-size: 9px; letter-spacing: 1px; padding: 2px 8px; cursor: pointer; border: 1px solid var(--dim2); color: #666; background: transparent; font-family: 'Courier New', monospace; text-transform: uppercase; transition: all .15s; }
+.act-btn:hover { border-color: var(--pink); color: var(--pink); }
+.act-btn.yellow:hover { border-color: var(--yellow); color: var(--yellow); }
+
+#preview-placeholder { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--dim2); gap: 10px; }
+#preview-placeholder .big { font-size: 32px; }
+#preview-placeholder .msg { font-size: 11px; letter-spacing: 2px; color: #333; }
+#preview-frame { flex: 1; border: none; display: none; background: white; }
+
+#right { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; background: var(--bg2); }
+#code-area { flex: 1; overflow-y: auto; padding: 10px; font-size: 10px; line-height: 1.6; color: #555; white-space: pre-wrap; word-break: break-word; }
+#code-area.has-code { color: #4a4; }
+#code-area::-webkit-scrollbar { width: 3px; }
+#code-area::-webkit-scrollbar-thumb { background: var(--dim2); }
+
+#log-area { height: 120px; flex-shrink: 0; border-top: 1px solid var(--dim); overflow-y: auto; padding: 8px 10px; font-size: 9px; line-height: 1.7; }
+#log-area::-webkit-scrollbar { width: 3px; }
+.log-line { display: flex; gap: 6px; }
+.log-t { color: #333; } .log-ai { color: var(--lime); } .log-mcp { color: var(--blue); } .log-err { color: #f55; } .log-ok { color: var(--yellow); }
+
+#statusbar { background: var(--black); border-top: 1px solid var(--dim); padding: 3px 16px; display: flex; justify-content: space-between; font-size: 9px; letter-spacing: 2px; color: #333; flex-shrink: 0; }
+.s-pink { color: var(--pink); } .s-blue { color: var(--blue); } .s-lime { color: var(--lime); }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="t-title">⬡ SOVEREIGN DESIGN STUDIO</div>
+  <div class="t-pills">
+    <span class="pill pill-ai">GESHEREL ✓</span>
+    <span class="pill pill-mcp">MEMORY ✓</span>
+    <span class="pill pill-live">LIVE</span>
+  </div>
+</div>
+
+<div id="studio">
+  <div id="left">
+    <div class="p-label">// tools · click to inject</div>
+    <div id="tool-rack">
+      <span class="tool-chip" data-tool="web_search">web search</span>
+      <span class="tool-chip" data-tool="gdrive">drive</span>
+      <span class="tool-chip" data-tool="gmail">gmail</span>
+      <span class="tool-chip" data-tool="gcal">calendar</span>
+      <span class="tool-chip" data-tool="api_socket">api socket</span>
+      <span class="tool-chip" data-tool="mcp_embed">mcp embed</span>
+      <span class="tool-chip" data-tool="sovereign_cli">cli skin</span>
+      <span class="tool-chip" data-tool="bootstrap">bootstrap</span>
+    </div>
+    <div id="sys-wrap">
+      <label>// SYSTEM IDENTITY</label>
+      <textarea id="sys-box">You are a sovereign artifact builder. Output ONLY complete, self-contained HTML. No markdown. No explanation. Dark sovereign aesthetic (black bg, pink/yellow/blue/lime). Fully functional on first load. Wire in GesherEl at http://localhost:8765/v1/messages for AI calls.</textarea>
+    </div>
+    <div id="prompt-wrap">
+      <label>// DESCRIBE YOUR ARTIFACT</label>
+      <textarea id="prompt-box" placeholder="e.g. a real-time dashboard that queries files and displays them in a glowing card grid..."></textarea>
+      <button id="build-btn">⬡ BUILD ARTIFACT</button>
+    </div>
+  </div>
+
+  <div id="center">
+    <div id="preview-bar">
+      <span>// LIVE PREVIEW</span>
+      <div id="preview-actions">
+        <button class="act-btn yellow" id="copy-btn">COPY CODE</button>
+        <button class="act-btn" id="dl-btn">DOWNLOAD</button>
+      </div>
+    </div>
+    <div id="preview-placeholder">
+      <div class="big">⬡</div>
+      <div class="msg">describe · build · preview</div>
+    </div>
+    <iframe id="preview-frame"></iframe>
+  </div>
+
+  <div id="right">
+    <div class="p-label">// generated code</div>
+    <div id="code-area">// output will appear here...</div>
+    <div id="log-area"></div>
+  </div>
+</div>
+
+<div id="statusbar">
+  <span><span class="s-pink">GESHEREL</span> · localhost:8765 · PROXY</span>
+  <span><span class="s-blue">MEMORY</span> · SHARED · <span class="s-lime">SOVEREIGN</span></span>
+</div>
+
+<script>
+const GESHEREL = 'http://localhost:8765';
+
+const TOOL_INJECTIONS = {
+  web_search:    '// includes: web search tool\n',
+  gdrive:        '// includes: Google Drive integration\n',
+  gmail:         '// includes: Gmail integration\n',
+  gcal:          '// includes: Google Calendar integration\n',
+  api_socket:    '// includes: GesherEl API socket wired to http://localhost:8765/v1/messages\n',
+  mcp_embed:     '// includes: MCP client embedded\n',
+  sovereign_cli: '// aesthetic: sovereign CLI skin (pink/yellow/blue/lime/black)\n',
+  bootstrap:     '// includes: self-installing bootstrap script\n',
+};
+
+let activeTools = new Set(['api_socket', 'sovereign_cli']);
+let generatedCode = '';
+
+document.querySelectorAll('.tool-chip').forEach(chip => {
+  const t = chip.dataset.tool;
+  if (activeTools.has(t)) chip.classList.add('active');
+  chip.addEventListener('click', () => {
+    activeTools.has(t) ? (activeTools.delete(t), chip.classList.remove('active'))
+                       : (activeTools.add(t),    chip.classList.add('active'));
+  });
+});
+
+function log(type, msg) {
+  const el = document.getElementById('log-area');
+  const now = new Date().toLocaleTimeString('en', {hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const line = document.createElement('div');
+  line.className = 'log-line';
+  line.innerHTML = `<span class="log-t">[${now}]</span><span class="log-${type}">${msg}</span>`;
+  el.appendChild(line); el.scrollTop = el.scrollHeight;
+}
+
+function buildSystem() {
+  let sys = document.getElementById('sys-box').value.trim();
+  const injected = [...activeTools].map(t => TOOL_INJECTIONS[t] || '').join('');
+  if (injected) sys += '\n\n' + injected;
+  sys += `\n\nCRITICAL: Wire AI calls to GesherEl: fetch("http://localhost:8765/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1000,messages:[...]})})`;
+  return sys;
+}
+
+function buildPrompt() {
+  const desc = document.getElementById('prompt-box').value.trim();
+  return `Build a complete self-contained HTML artifact: ${desc}\nActive capabilities: ${[...activeTools].join(', ')}\nOutput ONLY the raw HTML. Nothing else.`;
+}
+
+async function buildArtifact() {
+  const desc = document.getElementById('prompt-box').value.trim();
+  if (!desc) { log('err', 'describe your artifact first'); return; }
+
+  const btn = document.getElementById('build-btn');
+  btn.disabled = true; btn.textContent = '⬡ BUILDING...';
+  document.getElementById('code-area').textContent = '// generating...';
+  document.getElementById('code-area').className = '';
+  log('ai', 'sending to GesherEl...');
+
+  try {
+    const res = await fetch(GESHEREL + '/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-sovereign-app': 'sovereign-studio' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 4000,
+        system: buildSystem(),
+        messages: [{ role: 'user', content: buildPrompt() }]
+      })
+    });
+    const data = await res.json();
+    if (data.error) { log('err', data.error.message); return; }
+
+    let html = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
+    html = html.replace(/^```html?\n?/i, '').replace(/```$/, '').trim();
+    generatedCode = html;
+
+    document.getElementById('code-area').textContent = html;
+    document.getElementById('code-area').className = 'has-code';
+
+    const frame = document.getElementById('preview-frame');
+    document.getElementById('preview-placeholder').style.display = 'none';
+    frame.style.display = 'block';
+    frame.srcdoc = html;
+
+    log('ok', `artifact built · ${html.length} chars`);
+
+    // Store in GesherEl memory
+    await fetch(GESHEREL + '/memory/last_artifact', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ value: desc })
+    });
+
+  } catch(e) { log('err', e.message); }
+  finally { btn.disabled = false; btn.textContent = '⬡ BUILD ARTIFACT'; }
+}
+
+document.getElementById('copy-btn').addEventListener('click', () => {
+  if (!generatedCode) return;
+  navigator.clipboard.writeText(generatedCode).then(() => log('ok', 'copied'));
+});
+document.getElementById('dl-btn').addEventListener('click', () => {
+  if (!generatedCode) return;
+  const a = document.createElement('a');
+  a.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(generatedCode);
+  a.download = 'sovereign-artifact-' + Date.now() + '.html';
+  a.click(); log('ok', 'downloaded');
+});
+document.getElementById('build-btn').addEventListener('click', buildArtifact);
+document.getElementById('prompt-box').addEventListener('keydown', e => { if (e.ctrlKey && e.key === 'Enter') buildArtifact(); });
+
+log('ai', 'studio ready · GesherEl wired');
+log('mcp', 'endpoint: localhost:8765');
+log('ok', 'describe artifact · press build');
+</script>
+</body>
+</html>

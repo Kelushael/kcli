@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOVEREIGN CLI</title>
+<style>
+:root {
+  --pink: #ff6eb4;
+  --yellow: #ffe94d;
+  --blue: #7dd8f8;
+  --black: #0a0a0a;
+  --lime: #aaff00;
+  --bg: #0a0a0a;
+  --bg2: #111111;
+  --bg3: #181818;
+  --dim: #2a2a2a;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--lime);
+  font-family: 'Courier New', Courier, monospace;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#topbar {
+  background: var(--black);
+  border-bottom: 1px solid var(--dim);
+  padding: 6px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+#topbar .title { font-size: 11px; letter-spacing: 4px; color: var(--pink); text-transform: uppercase; font-weight: bold; }
+#topbar .status { display: flex; gap: 12px; font-size: 10px; letter-spacing: 1px; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
+.dot-pink { background: var(--pink); }
+.dot-yellow { background: var(--yellow); }
+.dot-blue { background: var(--blue); }
+.dot-lime { background: var(--lime); }
+.stat-pink { color: var(--pink); }
+.stat-yellow { color: var(--yellow); }
+.stat-blue { color: var(--blue); }
+.stat-lime { color: var(--lime); }
+
+#sysprompt-bar {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--dim);
+  padding: 6px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+#sysprompt-bar label { font-size: 10px; color: var(--yellow); letter-spacing: 2px; text-transform: uppercase; white-space: nowrap; }
+#sys-input {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--dim);
+  color: var(--yellow);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  padding: 4px 8px;
+  outline: none;
+  border-radius: 2px;
+}
+#sys-input:focus { border-color: var(--yellow); }
+#sys-btn {
+  background: transparent;
+  border: 1px solid var(--yellow);
+  color: var(--yellow);
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  padding: 4px 10px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+#sys-btn:hover { background: var(--yellow); color: var(--black); }
+
+#output {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--bg);
+}
+#output::-webkit-scrollbar { width: 4px; }
+#output::-webkit-scrollbar-track { background: var(--black); }
+#output::-webkit-scrollbar-thumb { background: var(--dim); }
+
+.line { font-size: 12px; line-height: 1.6; display: flex; gap: 8px; flex-wrap: wrap; word-break: break-word; }
+.line-prompt { color: var(--pink); white-space: nowrap; }
+.line-user { color: var(--blue); }
+.line-sys-label { color: var(--yellow); font-size: 10px; letter-spacing: 1px; }
+.line-ai { color: var(--lime); }
+.line-err { color: #ff4444; }
+.line-info { color: var(--dim); font-size: 10px; letter-spacing: 1px; }
+.line-sep { color: var(--dim); font-size: 10px; letter-spacing: 2px; }
+.cursor { display: inline-block; width: 8px; height: 13px; background: var(--lime); animation: blink 1s step-start infinite; vertical-align: middle; margin-left: 2px; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+#input-row {
+  background: var(--bg2);
+  border-top: 1px solid var(--dim);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+#prompt-label { color: var(--pink); font-size: 13px; font-weight: bold; white-space: nowrap; letter-spacing: 1px; }
+#user-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--blue);
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  outline: none;
+  caret-color: var(--lime);
+}
+#send-btn {
+  background: transparent;
+  border: 1px solid var(--lime);
+  color: var(--lime);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  padding: 5px 14px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+#send-btn:hover { background: var(--lime); color: var(--black); }
+#send-btn:disabled { opacity: 0.3; cursor: default; }
+
+#bottombar {
+  background: var(--black);
+  border-top: 1px solid var(--dim);
+  padding: 3px 16px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #333;
+  flex-shrink: 0;
+}
+.b-pink { color: var(--pink); }
+.b-blue { color: var(--blue); }
+
+/* Memory widget */
+#mem-widget {
+  position: fixed;
+  bottom: 36px;
+  right: 12px;
+  width: 220px;
+  background: var(--bg3);
+  border: 1px solid var(--dim);
+  font-size: 9px;
+  line-height: 1.6;
+  display: none;
+  z-index: 100;
+}
+#mem-widget .mw-hd {
+  padding: 3px 8px;
+  background: var(--black);
+  color: var(--yellow);
+  letter-spacing: 2px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+#mem-widget .mw-body { padding: 6px 8px; color: #555; max-height: 160px; overflow-y: auto; }
+#mem-toggle {
+  background: transparent;
+  border: 1px solid var(--dim);
+  color: #444;
+  font-family: 'Courier New', monospace;
+  font-size: 8px;
+  padding: 2px 6px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  position: fixed;
+  bottom: 36px;
+  right: 12px;
+}
+#mem-toggle:hover { border-color: var(--yellow); color: var(--yellow); }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="title">⬡ SOVEREIGN CLI</div>
+  <div class="status">
+    <span class="stat-pink"><span class="dot dot-pink"></span>GESHEREL</span>
+    <span class="stat-yellow"><span class="dot dot-yellow"></span>PROXY</span>
+    <span class="stat-blue"><span class="dot dot-blue"></span>MEMORY</span>
+    <span class="stat-lime"><span class="dot dot-lime"></span>READY</span>
+  </div>
+</div>
+
+<div id="sysprompt-bar">
+  <label>SYS:</label>
+  <input id="sys-input" type="text" value="You are a sovereign AI. You are loaded in RAM. You do not reset. Answer with clarity and precision." spellcheck="false" />
+  <button id="sys-btn">SET</button>
+</div>
+
+<div id="output"></div>
+
+<div id="input-row">
+  <div id="prompt-label">❯</div>
+  <input id="user-input" type="text" placeholder="enter command or message..." autocomplete="off" spellcheck="false" />
+  <button id="send-btn">SEND</button>
+</div>
+
+<div id="bottombar">
+  <span>GESHEREL · <span class="b-pink">localhost:8765</span> · PERSISTENT</span>
+  <span><span class="b-pink">CTX</span> · <span class="b-blue">SHARED MEMORY</span> · SOVEREIGN</span>
+</div>
+
+<button id="mem-toggle">MEM</button>
+<div id="mem-widget">
+  <div class="mw-hd" id="mw-close">// GESHEREL MEMORY <span>✕</span></div>
+  <div class="mw-body" id="mw-body">loading...</div>
+</div>
+
+<script>
+const GESHEREL = 'http://localhost:8765';
+const output   = document.getElementById('output');
+const userInput= document.getElementById('user-input');
+const sendBtn  = document.getElementById('send-btn');
+const sysInput = document.getElementById('sys-input');
+
+let systemPrompt = sysInput.value;
+let history = [];
+let isLoading = false;
+
+function addLine(type, prefix, text) {
+  const line = document.createElement('div');
+  line.className = 'line';
+  if (prefix) {
+    const p = document.createElement('span');
+    p.className = 'line-' + type;
+    p.textContent = prefix;
+    line.appendChild(p);
+  }
+  if (text !== undefined) {
+    const t = document.createElement('span');
+    t.className = type === 'prompt' ? 'line-user' : 'line-' + type;
+    t.textContent = text;
+    line.appendChild(t);
+  }
+  output.appendChild(line);
+  output.scrollTop = output.scrollHeight;
+  return line;
+}
+function addSep()       { addLine('sep', '─'.repeat(48)); }
+function addInfo(msg)   { addLine('info', '// ' + msg); }
+function showCursor()   {
+  const line = document.createElement('div');
+  line.className = 'line'; line.id = 'cursor-line';
+  const cur = document.createElement('span');
+  cur.className = 'cursor'; line.appendChild(cur);
+  output.appendChild(line); output.scrollTop = output.scrollHeight;
+}
+function removeCursor() { const c = document.getElementById('cursor-line'); if (c) c.remove(); }
+
+// Boot
+addInfo('SOVEREIGN CLI · GesherEl Ben YHWH');
+addInfo('endpoint: ' + GESHEREL + '/v1/messages');
+addInfo('memory:   ' + GESHEREL + '/memory');
+addSep();
+addInfo('type to begin. /clear /reset /history /memory');
+addSep();
+
+document.getElementById('sys-btn').addEventListener('click', () => {
+  systemPrompt = sysInput.value.trim() || systemPrompt;
+  history = [];
+  addSep();
+  addLine('sys-label', 'SYS:', systemPrompt);
+  addInfo('context reset.');
+  addSep();
+});
+
+async function sendMessage() {
+  const raw = userInput.value.trim();
+  if (!raw || isLoading) return;
+  userInput.value = '';
+
+  if (raw === '/clear') { output.innerHTML = ''; history = []; addInfo('cleared.'); return; }
+  if (raw === '/reset') { history = []; addInfo('history reset.'); return; }
+  if (raw === '/history') {
+    addSep();
+    history.forEach((m, i) => addLine(m.role === 'user' ? 'user' : 'ai', `[${i}][${m.role}]`, m.content));
+    addSep(); return;
+  }
+  if (raw === '/memory') { await showMemory(); return; }
+
+  addLine('prompt', '❯', raw);
+  history.push({ role: 'user', content: raw });
+  isLoading = true; sendBtn.disabled = true;
+  showCursor();
+
+  try {
+    const res = await fetch(GESHEREL + '/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-sovereign-app': 'sovereign-cli' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 2000,
+        system: systemPrompt,
+        messages: history.slice(0, -1).concat([{ role: 'user', content: raw }])
+      })
+    });
+    const data = await res.json();
+    removeCursor();
+    if (data.error) {
+      addLine('err', 'ERR:', data.error.message);
+    } else {
+      const reply = data.content?.find(b => b.type === 'text')?.text || '[no response]';
+      history.push({ role: 'assistant', content: reply });
+      reply.split('\n').forEach(ln => {
+        if (ln.trim()) addLine('ai', '◈', ln);
+        else output.appendChild(document.createElement('div'));
+      });
+    }
+  } catch (e) {
+    removeCursor();
+    addLine('err', 'ERR:', e.message);
+  }
+  addSep();
+  isLoading = false; sendBtn.disabled = false;
+  userInput.focus();
+}
+
+async function showMemory() {
+  try {
+    const r = await fetch(GESHEREL + '/memory');
+    const data = await r.json();
+    addSep();
+    addInfo('GesherEl shared memory:');
+    if (Object.keys(data).length === 0) { addInfo('(empty)'); }
+    else { Object.entries(data).forEach(([k, v]) => addLine('sys-label', k + ':', String(v).slice(0, 120))); }
+    addSep();
+  } catch(e) { addLine('err', 'MEM ERR:', e.message); }
+}
+
+sendBtn.addEventListener('click', sendMessage);
+userInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+userInput.focus();
+
+// Memory widget
+const memWidget = document.getElementById('mem-widget');
+const memToggle = document.getElementById('mem-toggle');
+const mwBody    = document.getElementById('mw-body');
+
+memToggle.addEventListener('click', () => {
+  memWidget.style.display = 'block';
+  memToggle.style.display = 'none';
+  refreshMem();
+});
+document.getElementById('mw-close').addEventListener('click', () => {
+  memWidget.style.display = 'none';
+  memToggle.style.display = 'block';
+});
+
+async function refreshMem() {
+  try {
+    const r = await fetch(GESHEREL + '/memory');
+    const data = await r.json();
+    const keys = Object.keys(data);
+    mwBody.innerHTML = keys.length === 0
+      ? '<span style="color:#333">(empty)</span>'
+      : keys.map(k => `<div><span style="color:var(--yellow)">${k}</span>: <span>${String(data[k]).slice(0,80)}</span></div>`).join('');
+  } catch(e) { mwBody.textContent = 'GesherEl offline'; }
+}
+setInterval(() => { if (memWidget.style.display !== 'none') refreshMem(); }, 4000);
+</script>
+</body>
+</html>
